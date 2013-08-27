@@ -7,7 +7,7 @@ module Spree
       @invoice_prints = spree_current_user.has_spree_role?(:admin) ? Spree::Invoice.find_or_create_by_order_id({:order_id => order_id, :user_id => @order ? @order.user_id : nil}) : spree_current_user.invoices.find_or_create_by_order_id(order_id)
       if @invoice_prints
         respond_to do |format|
-          format.pdf  { send_data @invoice_prints.generate_pdf(request), :filename => "#{@invoice_prints.invoice_number}.pdf", :type => 'application/pdf' }
+          format.pdf  { send_data @invoice_prints.generate_pdf(request, spree_current_user.has_spree_role?(:admin)), :filename => "#{@invoice_prints.invoice_number}.pdf", :type => 'application/pdf' }
           format.html { render :file => SpreeInvoice.invoice_template_path.to_s, :layout => false }
         end
       else
@@ -26,7 +26,9 @@ module Spree
       @invoice_print = spree_current_user ? Spree::Invoice.find_or_create_by_order_id({:order_id => order_id, :user_id => @order ? @order.user_id : nil}) : spree_current_user.invoices.find_or_create_by_order_id(order_id)
       if @invoice_print
         respond_to do |format|
-          format.pdf  { send_data @invoice_print.generate_pdf(request), :filename => "#{@invoice_print.invoice_number}.pdf", :type => 'application/pdf' }
+          format.pdf do
+            send_data @invoice_print.generate_pdf(request, spree_current_user.has_spree_role?(:admin)), :filename => "#{@invoice_print.invoice_number}.pdf", :type => 'application/pdf'
+          end
           format.html { render :file => SpreeInvoice.invoice_template_path.to_s, :layout => false }
         end
       else

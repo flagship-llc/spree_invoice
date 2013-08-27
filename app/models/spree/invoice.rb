@@ -10,8 +10,13 @@ module Spree
 
     attr_accessible :user, :order, :order_id, :user_id, :invoice_number, :counter
 
-    def generate_pdf request
+    def generate_pdf request, is_admin
       self.update_attribute(:counter, self.counter + 1)
+
+      unless is_admin
+        self.update_attribute(:pdf_counter, self.pdf_counter + 1)
+        self.update_attribute(:last_pdf_download, DateTime.now)
+      end
 
       WickedPdf.new.pdf_from_string(
         StaticRender.render_erb(SpreeInvoice.invoice_template_path, {
@@ -26,6 +31,7 @@ module Spree
     end
 
     private
+
     def generate_invoice_number
       write_attribute(:invoice_number, SpreeInvoice.invoice_number_generation_method.call(Spree::Invoice.from_current_year.length + 1))
     end

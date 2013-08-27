@@ -1,11 +1,11 @@
 module Spree
   OrderMailer.class_eval do
-    
+
     def confirm_email(order, resend = false)
       if SpreeInvoice.on_confirm_email && !SpreeInvoice.except_payment.include?(order.payment_method.type)
         inv_print = Spree::Invoice.find_or_create_by_order_id({:order_id => order.id, :user_id => order.user_id})
         attachments["#{inv_print.invoice_number}.pdf"] = {
-          :content => inv_print.generate_pdf,
+          :content => inv_print.generate_pdf(nil, order.user.has_spree_role?(:admin)),
           :mime_type => 'application/pdf'
         } if inv_print
       end

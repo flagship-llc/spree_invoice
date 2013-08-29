@@ -29,7 +29,7 @@ module Spree
           format.pdf do
             send_data @invoice_print.generate_pdf(request, spree_current_user.has_spree_role?(:admin)), :filename => "#{@invoice_print.invoice_number}.pdf", :type => 'application/pdf'
           end
-          format.html { render :file => SpreeInvoice.invoice_template_path.to_s, :layout => false }
+          format.html { redirect_to root_path }
         end
       else
         if spree_current_user.has_spree_role?(:admin)

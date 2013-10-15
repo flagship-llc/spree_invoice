@@ -17,4 +17,4 @@ Deface::Override.new(:virtual_path => %q{spree/admin/orders/index},
 Deface::Override.new(:virtual_path => %q{spree/admin/shared/_order_tabs},
                      :insert_top => 'ul[data-hook="admin_order_tabs"]',
                      :name => 'add_invoice_to_order_detail_page',
-                     :text => '<li><%= link_to "#{image_tag(\'admin/icons/pdf.png\')} #{t(:full_download_invoice, :scope => :spree)}".html_safe, pdf_invoice_path(:order_id => @order.id, :format => :pdf) %></li>')
+                     :text => '<li><%= link_to "#{image_tag(\'admin/icons/pdf.png\')} #{t(:full_download_invoice, :scope => :spree)}".html_safe, pdf_invoice_path(:order_id => @order.id, :format => :pdf) if @order.paid? %></li>')
